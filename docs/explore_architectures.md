@@ -1,0 +1,59 @@
+1. An agent file with refferenced files , ex agent.md
+
+Observations:
+Using Haiku I observed that the first connection attemp was timed out. The agent implemented the following solution:
+
+Agent Output:
+The earlier attempts were failing because:
+- The server was taking time to respond during client detection phase
+- Commands were being sent too fast without proper delays
+- The telnet connection was closing before commands completed
+So the solution was: combining timeout, bash subshell with process substitution, strategic sleep delays between commands, and piping input to telnet.
+
+Command that worked succesfuly was:
+timeout 30 bash -c '
+{
+  sleep 2
+  echo "Dummy"
+  sleep 1
+  echo "helloworld"
+  sleep 2
+  echo ""
+  sleep 1
+  echo "1"
+  sleep 3
+  echo "goto 3009"
+  sleep 2
+  echo "look"
+  sleep 1
+  echo "list"
+  sleep 2
+} | telnet localhost 4000'
+
+When starting to play the game the agent was confused about the bakery. IT tried to find details aout bakery on the local server. It didn't try to read further files like CHALLANGES.md
+
+## Haiku needed some extra guidance
+I had to update the copilot.md file with the following content:
+
+you are supposed to connect to localhost 4000 and play the game there, there is no bakery on the local server. Everything happens in the game. Use help once you are in the game to look for commands
+
+## Mission accomplished
+Haiku was very efficient and completed the quest but it did not read copilot.md to update the details as requested. I had to specifically prompt for this. 
+
+The model didn t try to read any other document like the CHALLANGES.md.
+
+Finally it updated the files and outputed the results in terminal:
+
+Task Completed:
+
+• ✅ Found the bakery (The Bakery at room 3009)
+• ✅ Listed the menu:
+• A danish pastry - 5 coins
+• A bread - 11 coins  
+• A waybread - 56 coins
+• ✅ Updated player.md with character state
+• ✅ Updated world.md with exploration map and findings
+
+Cost: 53 credits 
+Note: Didn t have to go with an expensive agent
+Code generation: the model didn t generate any code or temp files along the way which was very efficient.
